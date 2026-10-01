@@ -52,4 +52,6 @@ public class LoginPage extends BorderPane {
         form.getChildren().addAll(title, fields, buttons);
         return form;
     }
+
+
 }

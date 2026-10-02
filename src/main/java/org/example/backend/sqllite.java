@@ -27,7 +27,7 @@ public class sqllite {
                 " symptoms TEXT," +
                 " email TEXT UNIQUE NOT NULL," +
                 " password TEXT NOT NULL," +
-                " phone FLOAT NOT NULL" +
+                " phone INT NOT NULL" +
                 ");";
 
         String receptionist = "CREATE TABLE IF NOT EXISTS receptionist (" +
@@ -35,7 +35,7 @@ public class sqllite {
                 " name TEXT NOT NULL," +
                 " email TEXT UNIQUE NOT NULL," +
                 " password TEXT NOT NULL," +
-                " phone FLOAT NOT NULL" +
+                " phone INT NOT NULL" +
                 ");";
 
         String doctor = "CREATE TABLE IF NOT EXISTS receptionist (" +
@@ -44,8 +44,8 @@ public class sqllite {
                 " field TEXT NOT NULL," +
                 " email TEXT UNIQUE NOT NULL," +
                 " password TEXT NOT NULL," +
-                " phone FLOAT NOT NULL," +
-                " emrgphone FLOAT NOT NULL" +
+                " phone INT NOT NULL," +
+                " emrgphone INT NOT NULL" +
                 ");";
 
         String sql = patient + receptionist + doctor;

@@ -1,24 +1,25 @@
 package org.example.Objects;
 
 public class User {
-    private int id;
     private String name;
     private String email;
     private String password;
+    private int phone;
 
-    public User(int id, String name, String email, String password){
-        this.id = id;
+
+    public User(String name, String email, String password, int phone){
         this.name = name;
         this.email = email;
         this.password = password;
+        this.phone = phone;
     }
 
-    public int getId() {
-        return id;
+    public int getPhone() {
+        return phone;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setPhone(int phone) {
+        this.phone = phone;
     }
 
     public String getName() {

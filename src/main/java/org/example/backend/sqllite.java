@@ -23,21 +23,19 @@ public class sqllite {
         String patient = "CREATE TABLE IF NOT EXISTS patient (" +
                 " id INTEGER PRIMARY KEY," +
                 " name TEXT NOT NULL," +
-                " symptoms " +
+                " illness TEXT NOT NULL" +
+                " symptoms TEXT," +
                 " email TEXT UNIQUE NOT NULL," +
-                " password TEXT NOT NULL" +
-                ");";
-        String symptoms = "CREATE TABLE IF NOT EXISTS symptoms (" +
-                " paintype TEXT NOT NULL," +
-                " location TEXT NOT NULL," +
-                " duration TEXT NOT NULL" +
+                " password TEXT NOT NULL," +
+                " phone FLOAT NOT NULL" +
                 ");";
 
         String receptionist = "CREATE TABLE IF NOT EXISTS receptionist (" +
                 " id INTEGER PRIMARY KEY," +
                 " name TEXT NOT NULL," +
                 " email TEXT UNIQUE NOT NULL," +
-                " password TEXT NOT NULL" +
+                " password TEXT NOT NULL," +
+                " phone FLOAT NOT NULL" +
                 ");";
 
         String doctor = "CREATE TABLE IF NOT EXISTS receptionist (" +
@@ -45,10 +43,12 @@ public class sqllite {
                 " name TEXT NOT NULL," +
                 " field TEXT NOT NULL," +
                 " email TEXT UNIQUE NOT NULL," +
-                " password TEXT NOT NULL" +
+                " password TEXT NOT NULL," +
+                " phone FLOAT NOT NULL," +
+                " emrgphone FLOAT NOT NULL" +
                 ");";
 
-        String sql = patient + symptoms + receptionist + doctor;
+        String sql = patient + receptionist + doctor;
 
         try (Connection conn = DriverManager.getConnection(url);
              Statement stmt = conn.createStatement()) {

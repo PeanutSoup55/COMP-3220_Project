@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class sqllite {
+public class tables {
 
     private static final String url = "jdbc:sqlite:identifier.sqlite";
 
@@ -23,7 +23,7 @@ public class sqllite {
         String patient = "CREATE TABLE IF NOT EXISTS patient (" +
                 " id INTEGER PRIMARY KEY," +
                 " name TEXT NOT NULL," +
-                " illness TEXT NOT NULL" +
+                " illness TEXT NOT NULL," +
                 " symptoms TEXT," +
                 " email TEXT UNIQUE NOT NULL," +
                 " password TEXT NOT NULL," +
@@ -38,7 +38,7 @@ public class sqllite {
                 " phone INT NOT NULL" +
                 ");";
 
-        String doctor = "CREATE TABLE IF NOT EXISTS receptionist (" +
+        String doctor = "CREATE TABLE IF NOT EXISTS doctor (" +
                 " id INTEGER PRIMARY KEY," +
                 " name TEXT NOT NULL," +
                 " field TEXT NOT NULL," +
@@ -48,12 +48,11 @@ public class sqllite {
                 " emrgphone INT NOT NULL" +
                 ");";
 
-        String sql = patient + receptionist + doctor;
 
-        try (Connection conn = DriverManager.getConnection(url);
-             Statement stmt = conn.createStatement()) {
-
-            stmt.execute(sql);
+        try (Connection conn = DriverManager.getConnection(url); Statement stmt = conn.createStatement()) {
+            stmt.execute(patient);
+            stmt.execute(receptionist);
+            stmt.execute(doctor);
             System.out.println("Database and table created successfully.");
 
         } catch (SQLException e) {

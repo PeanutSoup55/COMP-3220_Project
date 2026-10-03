@@ -1,7 +1,6 @@
 package org.example.UI;
 
 import javafx.geometry.Insets;
-import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
@@ -9,6 +8,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import org.example.Objects.UIObjects.StyledButton;
+import org.example.Objects.UIObjects.StyledTextField;
 
 public class LoginPage extends BorderPane {
 
@@ -38,16 +39,16 @@ public class LoginPage extends BorderPane {
 
         email.setStyle("-fx-font-size: 20;");
         password.setStyle("-fx-font-size: 20;");
-        TextField emailField = new TextField();
-        PasswordField passwordField = new PasswordField();
+        StyledTextField emailField = new StyledTextField("john@example.com");
+        StyledTextField passwordField = new StyledTextField("12bucklemyshoe");
         text.getChildren().addAll(email, password);
         input.getChildren().addAll(emailField, passwordField);
         HBox fields = new HBox();
         fields.getChildren().addAll(text, input);
 
         VBox buttons = new VBox();
-        Button button = new Button("Login");
-        Button button2 = new Button("Sign Up");
+        StyledButton button = new StyledButton("Login");
+        StyledButton button2 = new StyledButton("Sign Up");
         buttons.getChildren().addAll(button, button2);
         form.getChildren().addAll(title, fields, buttons);
         return form;

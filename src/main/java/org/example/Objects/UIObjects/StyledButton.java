@@ -1,4 +1,4 @@
-package org.example.Objects;
+package org.example.Objects.UIObjects;
 import javafx.scene.control.Button;
 
 public class StyledButton extends Button {

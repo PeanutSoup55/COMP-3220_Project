@@ -1,13 +1,14 @@
 package org.example.backend;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import org.example.Objects.Patient;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class tables {
 
-    private static final String url = "jdbc:sqlite:identifier.sqlite";
+    public static final String url = "jdbc:sqlite:identifier.sqlite";
 
     public static Connection connection(){
         Connection connection = null;

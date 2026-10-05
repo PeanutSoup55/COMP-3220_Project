@@ -1,10 +1,6 @@
 package org.example.backend;
 
-import org.example.Objects.Patient;
-
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class tables {
 

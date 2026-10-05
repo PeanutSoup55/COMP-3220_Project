@@ -55,6 +55,17 @@ public class tables {
         } catch (SQLException e) {
             System.err.println("Database error: " + e.getMessage());
         }
+
+        String query = "INSERT INTO patient (id, name, illness, symptoms, email, password, phone)\n" +
+                "VALUES (1, 'rick', 'Flu', 'Fever, Cough, Fatigue', 'rick@gmail.ca', 'a', 5550199);";
+
+        //put sql querys here because for some reason intellij premium is required to do edits to sqlite. those greedy cucks.
+        try (Connection conn = DriverManager.getConnection(url); Statement stmt = conn.createStatement()){
+            stmt.execute(query);
+            System.out.println("query executed");
+        }catch (SQLException e){
+            System.err.println("fix it moron -> " + e.getMessage());
+        }
     }
 
 }

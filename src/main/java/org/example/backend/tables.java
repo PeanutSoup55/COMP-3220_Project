@@ -1,13 +1,11 @@
 package org.example.backend;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class tables {
 
-    private static final String url = "jdbc:sqlite:identifier.sqlite";
+    //db url, kinda important
+    public static final String url = "jdbc:sqlite:identifier.sqlite";
 
     public static Connection connection(){
         Connection connection = null;
@@ -49,7 +47,7 @@ public class tables {
                 ");";
 
 
-        try (Connection conn = DriverManager.getConnection(url); Statement stmt = conn.createStatement()) {
+        try (Connection conn = connection(); Statement stmt = conn.createStatement()) {
             stmt.execute(patient);
             stmt.execute(receptionist);
             stmt.execute(doctor);
@@ -58,6 +56,16 @@ public class tables {
         } catch (SQLException e) {
             System.err.println("Database error: " + e.getMessage());
         }
+
+//        String query = "INSERT INTO receptionist (id, name, email, password, phone) VALUES (1, 'john', 'john@clinic.ca', 'a', 5550192);";
+//
+//        //put sql querys here because for some reason intellij premium is required to do edits to sqlite. those greedy cucks.
+//        try (Connection conn = connection(); Statement stmt = conn.createStatement()){
+//            stmt.execute(query);
+//            System.out.println("query executed");
+//        }catch (SQLException e){
+//            System.err.println("fix it moron -> " + e.getMessage());
+//        }
     }
 
 }

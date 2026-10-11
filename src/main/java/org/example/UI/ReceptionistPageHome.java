@@ -6,15 +6,18 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.example.Objects.Patient;
+import org.example.Objects.UIObjects.GlobalPageStandard;
 import org.example.backend.fetchData;
 
-public class ReceptionistPageHome extends BorderPane {
+public class ReceptionistPageHome extends GlobalPageStandard {
     public ReceptionistPageHome(Stage primaryStage) {
-        setLeft(PatientList());
+        super(primaryStage, "Receptionist");
+        VBox content = PatientList();
+        pageContent(content);
     }
 
     public VBox PatientList(){
-        VBox patients = new VBox();
+        VBox patients = new VBox(15);
         Text a = new Text("Patient List");
         patients.getChildren().add(a);
 

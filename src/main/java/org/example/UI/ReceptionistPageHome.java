@@ -19,7 +19,7 @@ public class ReceptionistPageHome extends BorderPane {
         patients.getChildren().add(a);
 
         for (Patient patient : fetchData.GetPatientData()){
-            Text patientName = new Text(patient.getName());
+            Text patientName = new Text(patient.getName() + " (email: " + patient.getEmail() + ")");
             patients.getChildren().add(patientName);
         }
 

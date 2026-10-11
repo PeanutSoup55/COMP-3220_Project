@@ -56,8 +56,7 @@ public class tables {
             System.err.println("Database error: " + e.getMessage());
         }
 
-        String query = "INSERT INTO patient (id, name, illness, symptoms, email, password, phone)\n" +
-                "VALUES (1, 'rick', 'Flu', 'Fever, Cough, Fatigue', 'rick@gmail.ca', 'a', 5550199);";
+        String query = "INSERT INTO receptionist (id, name, email, password, phone) VALUES (1, 'john', 'john@clinic.ca', 'a', 5550192);";
 
         //put sql querys here because for some reason intellij premium is required to do edits to sqlite. those greedy cucks.
         try (Connection conn = DriverManager.getConnection(url); Statement stmt = conn.createStatement()){

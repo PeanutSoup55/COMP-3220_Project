@@ -10,11 +10,11 @@ public class fetchData {
 
     public static List<Patient> GetPatientData(){
         List<Patient> patients = new ArrayList<>();
-        String sql = "SELECT patientID, illness, symptoms, name, email, password, phone FROM patient";
+        String sql = "SELECT id, illness, symptoms, name, email, password, phone FROM patient";
         try(Connection con = DriverManager.getConnection(tables.url); Statement stmt = con.createStatement(); ResultSet rst = stmt.executeQuery(sql)){
             while (rst.next()){
                 Patient patient = new Patient(
-                        rst.getInt("patientID"),
+                        rst.getInt("id"),
                         rst.getString("illness"),
                         rst.getString("symptoms"),
                         rst.getString("name"),

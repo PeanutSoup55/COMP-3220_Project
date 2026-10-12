@@ -1,5 +1,6 @@
 package org.example.backend;
 
+import org.example.Objects.Appointment;
 import org.example.Objects.Patient;
 
 import java.sql.*;
@@ -42,5 +43,9 @@ public class fetchData {
 
         //return list
         return patients;
+    }
+
+    public static List<Appointment> GetAptData(){
+
     }
 }

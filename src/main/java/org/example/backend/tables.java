@@ -46,11 +46,22 @@ public class tables {
                 " emrgphone INT NOT NULL" +
                 ");";
 
+        String appointment = "CREATE TABLE IF NOT EXISTS appointment (" +
+                " id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                " p_id INTEGER NOT NULL," +
+                " d_id INTEGER NOT NULL," +
+                " date TEXT NOT NULL," +
+                " location TEXT NOT NULL," +
+                " FOREIGN KEY (p_id) REFERENCES patient(id)," +
+                " FOREIGN KEY (d_id) REFERENCES doctor(id)" +
+                ");";
+
 
         try (Connection conn = connection(); Statement stmt = conn.createStatement()) {
             stmt.execute(patient);
             stmt.execute(receptionist);
             stmt.execute(doctor);
+            stmt.execute(appointment);
             System.out.println("Database and table created successfully.");
 
         } catch (SQLException e) {

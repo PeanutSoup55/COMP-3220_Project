@@ -1,10 +1,9 @@
 package org.example.UI;
 
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.example.Objects.UIObjects.StyledButton;
@@ -22,17 +21,15 @@ public class LoginPage extends BorderPane {
     }
 
     private VBox createLoginForm(Stage primaryStage){
-        VBox form = new VBox();
+        VBox form = new VBox(24);
         form.setPadding(new Insets(40, 40, 40, 40));
         form.setStyle("-fx-border-color: #d3d3d3; -fx-border-radius: 8; -fx-background-radius: 8;");
+        form.setAlignment(Pos.CENTER);
         form.setMaxWidth(400);
-        form.setMaxHeight(600);
+        form.setMaxHeight(Region.USE_PREF_SIZE);
         Text title = new Text("Login");
         title.setStyle("-fx-font-size: 48px; -fx-font-weight: 700;");
-        VBox text = new VBox();
-        text.setPadding(new Insets(10, 10, 10, 10));
-        VBox input = new VBox();
-        input.setPadding(new Insets(5, 5, 5,5 ));
+
         Text email = new Text("Email: ");
         Text password = new Text("Password: ");
 
@@ -40,14 +37,23 @@ public class LoginPage extends BorderPane {
         password.setStyle("-fx-font-size: 20;");
         StyledTextField emailField = new StyledTextField("john@example.com");
         StyledTextField passwordField = new StyledTextField("12bucklemyshoe");
-        text.getChildren().addAll(email, password);
-        input.getChildren().addAll(emailField, passwordField);
-        HBox fields = new HBox();
-        fields.getChildren().addAll(text, input);
+
+        GridPane fields = new GridPane();
+        fields.setHgap(15);
+        fields.setVgap(15);
+        ColumnConstraints labelCol = new ColumnConstraints();
+        ColumnConstraints fieldCol = new ColumnConstraints();
+        fieldCol.setHgrow(Priority.ALWAYS);
+        fields.getColumnConstraints().addAll(labelCol, fieldCol);
+        fields.addRow(0, email, emailField);
+        fields.addRow(1, password, passwordField);
 
         VBox buttons = new VBox();
+        buttons.setSpacing(10);
         StyledButton button = new StyledButton("Login");
         StyledButton button2 = new StyledButton("Sign Up");
+        button.setMaxWidth(Double.MAX_VALUE);
+        button2.setMaxWidth(Double.MAX_VALUE);
 
         button.setOnMouseClicked(e -> {
             String emailText = emailField.getText();

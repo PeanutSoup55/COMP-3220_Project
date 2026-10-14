@@ -45,7 +45,7 @@ public class fetchData {
         return patients;
     }
 
-    public static List<Appointment> GetAptData(){
-
-    }
+//    public static List<Appointment> GetAptData(){
+//
+//    }
 }

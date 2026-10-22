@@ -5,7 +5,7 @@ import java.sql.*;
 public class tables {
 
     //db url, kinda important
-    public static final String url = "jdbc:sqlite:identifier.sqlite";
+    public static final String url = "jdbc:sqlite:./identifier.sqlite";
 
     public static Connection connection(){
         Connection connection = null;

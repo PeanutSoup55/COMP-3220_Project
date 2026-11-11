@@ -26,9 +26,32 @@ public class signup {
         return signup(sql, name, email, password, phone);
     }
 
-    private static String register(String sql, String name, String email, String password, String phone, String... extras) {
+    private static String signup(String sql, String name, String email, String password, String phone, String... extras) {
         if (blank(name) || blank(email) || blank(password) || blank(phone)) {
             return "all fields required";
+        }
+        email = email.trim().toLowerCase();
+        if (!email.matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")) {
+            return "invalid email";
+        }
+
+        try (Connection con = tables.connection();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+            stmt.setString(1, name.trim());
+            stmt.setString(2, email);
+            stmt.setString(3, password);
+            stmt.setString(4, phone.trim());
+            for (int i = 0; i < extras.length; i++) {
+                stmt.setString(5 + i, extras[i]);
+            }
+            stmt.executeUpdate();
+            return "success";
+        } catch (SQLException e) {
+            if (e.getMessage() != null && e.getMessage().contains("UNIQUE")) {
+                return "email already registered";
+            }
+            System.err.println("signup failed: " + e.getMessage());
+            return "signup failed";
         }
     }
 

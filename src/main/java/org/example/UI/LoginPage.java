@@ -69,6 +69,7 @@ public class LoginPage extends BorderPane {
                 System.out.println("Invalid email or password!");
             }
         });
+        button2.setOnMouseClicked(e -> primaryStage.setScene(new Scene(new SignupPage(primaryStage), 1000, 700)));
 
         buttons.getChildren().addAll(button, button2);
         form.getChildren().addAll(title, fields, buttons);

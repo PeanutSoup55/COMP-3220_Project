@@ -32,6 +32,9 @@ public class login {
             stmt.setString(2, password);
             ResultSet rst = stmt.executeQuery();
             if (rst.next()){
+                //now using session page for context
+                Session.id = rst.getInt("id");
+                Session.role = table;
                 return table;
             }
         }catch (SQLException e){

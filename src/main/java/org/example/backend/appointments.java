@@ -43,6 +43,21 @@ public class appointments {
             stmt.setInt(1, aid);
             stmt.setInt(2, pid);
             stmt.setString(3, now());
+            return stmt.executeUpdate() == 1;
+        }catch (SQLException e){
+            System.err.println("that also didnt work: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public static boolean cancelAny(int aid){
+        String sql = "DELETE FROM appointment WHERE id = ?";
+        try (Connection con = tables.connection(); PreparedStatement stmt = con.prepareStatement(sql)){
+            stmt.setInt(1, aid);
+            return stmt.executeUpdate() == 1;
+        }catch (SQLException e){
+            System.err.println("u kinda suck at this");
+            return false;
         }
     }
 }

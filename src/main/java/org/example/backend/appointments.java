@@ -4,9 +4,16 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class appointments {
+
+    private static final DateTimeFormatter time = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    public static String now(){
+        return LocalDateTime.now().format(time);
+    }
 
     public static boolean book(int pid, int did, String slot){
         String sql = "INSERT INTO appointment (p_id, d_id, date, location) "
@@ -30,6 +37,12 @@ public class appointments {
     }
 
     public static boolean cancelOwn(int aid, int pid){
+        String sql = "DELETE FROM appointment WHERE id = ? AND p_id = ? AND date > ?";
 
+        try (Connection con = tables.connection(); PreparedStatement stmt = con.prepareStatement(sql)){
+            stmt.setInt(1, aid);
+            stmt.setInt(2, pid);
+            stmt.setString(3, now());
+        }
     }
 }

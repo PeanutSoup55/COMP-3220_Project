@@ -1,12 +1,11 @@
 package org.example.backend;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class appointments {
 
@@ -59,5 +58,29 @@ public class appointments {
             System.err.println("u kinda suck at this");
             return false;
         }
+    }
+
+    public static List<String[]> forPatient(int pid){
+        List<String[]> rows = new ArrayList<>();
+        String sql = "SELECT a.id, a.date, d.name AS doctor_name, d.field, a.location "
+                + "FROM appointment a JOIN doctor d ON d.id = a.d_id "
+                + "WHERE a.p_id = ? ORDER BY a.date";
+        try(Connection con = tables.connection(); PreparedStatement stmt = con.prepareStatement(sql)){
+            stmt.setInt(1, pid);
+            try(ResultSet rs = stmt.executeQuery()){
+                while (rs.next()){
+                    rows.add(new String[]{
+                            rs.getString("id"),
+                            rs.getString("date"),
+                            rs.getString("name"),
+                            rs.getString("field"),
+                            rs.getString("location")
+                    });
+                }
+            }
+        }catch (SQLException e){
+            System.err.println("like really suck at this: " + e.getMessage());
+        }
+        return rows;
     }
 }

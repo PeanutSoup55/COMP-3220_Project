@@ -56,12 +56,21 @@ public class tables {
                 " FOREIGN KEY (d_id) REFERENCES doctor(id)" +
                 ");";
 
+        String availability = "CREATE TABLE IF NOT EXISTS availability (" +
+                " id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                " d_id INTEGER NOT NULL," +
+                " slot TEXT NOT NULL," +
+                " UNIQUE (d_id, slot)," +
+                " FOREIGN KEY (d_id) REFERENCES doctor(id)" +
+                ");";
+
 
         try (Connection conn = connection(); Statement stmt = conn.createStatement()) {
             stmt.execute(patient);
             stmt.execute(receptionist);
             stmt.execute(doctor);
             stmt.execute(appointment);
+            stmt.execute(availability);
             System.out.println("Database and table created successfully.");
 
         } catch (SQLException e) {

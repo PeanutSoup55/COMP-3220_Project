@@ -8,6 +8,7 @@ import java.sql.SQLException;
 public class signup {
 
     public static String signupPatient(String name, String email, String password, String phone, String illness, String symptoms) {
+        if (email != null && (email.trim().toLowerCase().endsWith("@doctor.ca") || email.trim().toLowerCase().endsWith("@clinic.ca"))) return "invalid patient email";
         if (blank(illness)) return "all fields required";
         String sql = "INSERT INTO patient (name, email, password, phone, illness, symptoms) VALUES (?, ?, ?, ?, ?, ?)";
         return signup(sql, name, email, password, phone, illness.trim(), symptoms == null ? null : symptoms.trim());

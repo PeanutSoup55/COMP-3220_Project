@@ -54,27 +54,45 @@ public class LoginPage extends BorderPane {
         StyledButton button2 = new StyledButton("Sign Up");
         button.setMaxWidth(Double.MAX_VALUE);
         button2.setMaxWidth(Double.MAX_VALUE);
+        buttons.getChildren().addAll(button, button2);
 
-        button.setOnMouseClicked(e -> {
+        Text errorText = new Text();
+        errorText.setStyle("-fx-fill: #c0392b; -fx-font-size: 14;");
+        errorText.setVisible(false);
+        errorText.managedProperty().bind(errorText.visibleProperty());
+
+        Runnable doLogin = () -> {
             String emailText = emailField.getText();
             String passwordText = passwordField.getText();
-            String table = login.login(emailText, passwordText);
-            if (table.equals("receptionist")) {
-                primaryStage.setScene(new Scene(new ReceptionistPageHome(primaryStage), 1000, 700));
-            } else if (table.equals("doctor")) {
-                primaryStage.setScene(new Scene(new DoctorPageHome(primaryStage), 1000, 700));
-            } else if (table.equals("patient")) {
-                primaryStage.setScene(new Scene(new PatientPageHome(primaryStage), 1000, 700));
-            } else {
-                System.out.println("Invalid email or password!");
-            }
-        });
-        button2.setOnMouseClicked(e -> primaryStage.setScene(new Scene(new SignupPage(primaryStage), 1000, 700)));
 
-        buttons.getChildren().addAll(button, button2);
-        form.getChildren().addAll(title, fields, buttons);
+            if (emailText == null || emailText.isBlank() || passwordText.isEmpty()) {
+                showError(errorText, "Enter your email and password");
+                return;
+            }
+
+            String table = login.login(emailText, passwordText);
+            switch (table) {
+                case "receptionist" -> primaryStage.setScene(new Scene(new ReceptionistPageHome(primaryStage), 1000, 700));
+                case "doctor" -> primaryStage.setScene(new Scene(new DoctorPageHome(primaryStage), 1000, 700));
+                case "patient" -> primaryStage.setScene(new Scene(new PatientPageHome(primaryStage), 1000, 700));
+                default -> {
+                    showError(errorText, "Invalid email or password");
+                    passwordField.clear();
+                }
+            }
+        };
+
+        button.setOnAction(e -> doLogin.run());
+        emailField.setOnAction(e -> doLogin.run());
+        passwordField.setOnAction(e -> doLogin.run());
+        button2.setOnAction(e -> primaryStage.setScene(new Scene(new SignupPage(primaryStage), 1000, 700)));
+
+        form.getChildren().addAll(title, fields, errorText, buttons);
         return form;
     }
-
+    private void showError(Text target, String msg) {
+        target.setText(msg);
+        target.setVisible(true);
+    }
 
 }

@@ -178,4 +178,30 @@ public class appointments {
         }
         return rows;
     }
+
+    public static List<String[]> all() {
+        List<String[]> rows = new ArrayList<>();
+        String sql = "SELECT a.id, a.date, p.name AS patient_name, d.name AS doctor_name "
+                + "FROM appointment a "
+                + "JOIN patient p ON p.id = a.p_id "
+                + "JOIN doctor d ON d.id = a.d_id "
+                + "ORDER BY a.date";
+
+        try (Connection con = tables.connection();
+             PreparedStatement stmt = con.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                rows.add(new String[]{
+                        rs.getString("id"),
+                        rs.getString("date"),
+                        rs.getString("patient_name"),
+                        rs.getString("doctor_name")
+                });
+            }
+        } catch (SQLException e) {
+            System.err.println("all failed: " + e.getMessage());
+        }
+        return rows;
+    }
 }

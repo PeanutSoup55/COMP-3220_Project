@@ -1,6 +1,7 @@
 package org.example.backend;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -203,5 +204,34 @@ public class appointments {
             System.err.println("all failed: " + e.getMessage());
         }
         return rows;
+    }
+
+    //receptionist specific
+    public static void addSlot(int doctorId, LocalDate date, String time) {
+        String sql = "INSERT OR IGNORE INTO availability (d_id, slot) VALUES (?, ?)";
+
+        try (Connection con = tables.connection();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+
+            stmt.setInt(1, doctorId);
+            stmt.setString(2, date + " " + time);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("addSlot failed: " + e.getMessage());
+        }
+    }
+
+    public static void removeSlot(int doctorId, String slot) {
+        String sql = "DELETE FROM availability WHERE d_id = ? AND slot = ?";
+
+        try (Connection con = tables.connection();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+
+            stmt.setInt(1, doctorId);
+            stmt.setString(2, slot);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("removeSlot failed: " + e.getMessage());
+        }
     }
 }

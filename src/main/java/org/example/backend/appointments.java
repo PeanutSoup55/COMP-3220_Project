@@ -128,4 +128,54 @@ public class appointments {
         }
         return rows;
     }
+
+    public static List<String[]> openSlots(int doctorId) {
+        List<String[]> rows = new ArrayList<>();
+        String sql = "SELECT slot FROM availability "
+                + "WHERE d_id = ? AND slot > ? "
+                + "AND slot NOT IN (SELECT date FROM appointment WHERE d_id = ?) "
+                + "ORDER BY slot";
+
+        try (Connection con = tables.connection();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+
+            stmt.setInt(1, doctorId);
+            stmt.setString(2, now());
+            stmt.setInt(3, doctorId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    rows.add(new String[]{rs.getString("slot")});
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("openSlots failed: " + e.getMessage());
+        }
+        return rows;
+    }
+
+    public static List<String[]> allSlots(int doctorId) {
+        List<String[]> rows = new ArrayList<>();
+        String sql = "SELECT slot, "
+                + "EXISTS(SELECT 1 FROM appointment a WHERE a.d_id = availability.d_id AND a.date = availability.slot) AS booked "
+                + "FROM availability WHERE d_id = ? ORDER BY slot";
+
+        try (Connection con = tables.connection();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+
+            stmt.setInt(1, doctorId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    rows.add(new String[]{
+                            rs.getString("slot"),
+                            rs.getString("booked")
+                    });
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("allSlots failed: " + e.getMessage());
+        }
+        return rows;
+    }
 }

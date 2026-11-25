@@ -83,4 +83,49 @@ public class appointments {
         }
         return rows;
     }
+
+    public static List<String[]> fields() {
+        List<String[]> rows = new ArrayList<>();
+        String sql = "SELECT DISTINCT field FROM doctor ORDER BY field";
+
+        try (Connection con = tables.connection();
+             PreparedStatement stmt = con.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                rows.add(new String[]{rs.getString("field")});
+            }
+        } catch (SQLException e) {
+            System.err.println("fields failed: " + e.getMessage());
+        }
+        return rows;
+    }
+
+    public static List<String[]> doctors(String field) {
+        List<String[]> rows = new ArrayList<>();
+        boolean filtered = field != null && !field.isEmpty();
+        String sql = filtered
+                ? "SELECT id, name, field FROM doctor WHERE field = ? ORDER BY name"
+                : "SELECT id, name, field FROM doctor ORDER BY name";
+
+        try (Connection con = tables.connection();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+
+            if (filtered) {
+                stmt.setString(1, field);
+            }
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    rows.add(new String[]{
+                            rs.getString("id"),
+                            rs.getString("name"),
+                            rs.getString("field")
+                    });
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("doctors failed: " + e.getMessage());
+        }
+        return rows;
+    }
 }

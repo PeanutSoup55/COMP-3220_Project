@@ -1,6 +1,7 @@
 package org.example.backend;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -82,5 +83,155 @@ public class appointments {
             System.err.println("like really suck at this: " + e.getMessage());
         }
         return rows;
+    }
+
+    public static List<String[]> fields() {
+        List<String[]> rows = new ArrayList<>();
+        String sql = "SELECT DISTINCT field FROM doctor ORDER BY field";
+
+        try (Connection con = tables.connection();
+             PreparedStatement stmt = con.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                rows.add(new String[]{rs.getString("field")});
+            }
+        } catch (SQLException e) {
+            System.err.println("fields failed: " + e.getMessage());
+        }
+        return rows;
+    }
+
+    public static List<String[]> doctors(String field) {
+        List<String[]> rows = new ArrayList<>();
+        boolean filtered = field != null && !field.isEmpty();
+        String sql = filtered
+                ? "SELECT id, name, field FROM doctor WHERE field = ? ORDER BY name"
+                : "SELECT id, name, field FROM doctor ORDER BY name";
+
+        try (Connection con = tables.connection();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+
+            if (filtered) {
+                stmt.setString(1, field);
+            }
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    rows.add(new String[]{
+                            rs.getString("id"),
+                            rs.getString("name"),
+                            rs.getString("field")
+                    });
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("doctors failed: " + e.getMessage());
+        }
+        return rows;
+    }
+
+    public static List<String[]> openSlots(int doctorId) {
+        List<String[]> rows = new ArrayList<>();
+        String sql = "SELECT slot FROM availability "
+                + "WHERE d_id = ? AND slot > ? "
+                + "AND slot NOT IN (SELECT date FROM appointment WHERE d_id = ?) "
+                + "ORDER BY slot";
+
+        try (Connection con = tables.connection();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+
+            stmt.setInt(1, doctorId);
+            stmt.setString(2, now());
+            stmt.setInt(3, doctorId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    rows.add(new String[]{rs.getString("slot")});
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("openSlots failed: " + e.getMessage());
+        }
+        return rows;
+    }
+
+    public static List<String[]> allSlots(int doctorId) {
+        List<String[]> rows = new ArrayList<>();
+        String sql = "SELECT slot, "
+                + "EXISTS(SELECT 1 FROM appointment a WHERE a.d_id = availability.d_id AND a.date = availability.slot) AS booked "
+                + "FROM availability WHERE d_id = ? ORDER BY slot";
+
+        try (Connection con = tables.connection();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+
+            stmt.setInt(1, doctorId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    rows.add(new String[]{
+                            rs.getString("slot"),
+                            rs.getString("booked")
+                    });
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("allSlots failed: " + e.getMessage());
+        }
+        return rows;
+    }
+
+    public static List<String[]> all() {
+        List<String[]> rows = new ArrayList<>();
+        String sql = "SELECT a.id, a.date, p.name AS patient_name, d.name AS doctor_name "
+                + "FROM appointment a "
+                + "JOIN patient p ON p.id = a.p_id "
+                + "JOIN doctor d ON d.id = a.d_id "
+                + "ORDER BY a.date";
+
+        try (Connection con = tables.connection();
+             PreparedStatement stmt = con.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                rows.add(new String[]{
+                        rs.getString("id"),
+                        rs.getString("date"),
+                        rs.getString("patient_name"),
+                        rs.getString("doctor_name")
+                });
+            }
+        } catch (SQLException e) {
+            System.err.println("all failed: " + e.getMessage());
+        }
+        return rows;
+    }
+
+    //receptionist specific
+    public static void addSlot(int doctorId, LocalDate date, String time) {
+        String sql = "INSERT OR IGNORE INTO availability (d_id, slot) VALUES (?, ?)";
+
+        try (Connection con = tables.connection();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+
+            stmt.setInt(1, doctorId);
+            stmt.setString(2, date + " " + time);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("addSlot failed: " + e.getMessage());
+        }
+    }
+
+    public static void removeSlot(int doctorId, String slot) {
+        String sql = "DELETE FROM availability WHERE d_id = ? AND slot = ?";
+
+        try (Connection con = tables.connection();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+
+            stmt.setInt(1, doctorId);
+            stmt.setString(2, slot);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("removeSlot failed: " + e.getMessage());
+        }
     }
 }

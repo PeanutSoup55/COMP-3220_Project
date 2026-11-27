@@ -76,16 +76,37 @@ public class tables {
         } catch (SQLException e) {
             System.err.println("Database error: " + e.getMessage());
         }
+        printReceptionistCredentials();
 
-//        String query = "INSERT INTO doctor (id, name, field, email, password, phone, emrgphone) VALUES (1, 'john', 'family medicine', 'john@doctor.ca', 'a', 5550198, 8967456);";
-//
-//        //put sql querys here because for some reason intellij premium is required to do edits to sqlite. those greedy cucks.
-//        try (Connection conn = connection(); Statement stmt = conn.createStatement()){
-//            stmt.execute(query);
-//            System.out.println("query executed");
-//        }catch (SQLException e){
-//            System.err.println("fix it moron -> " + e.getMessage());
-//        }
+    }
+
+    //just so i dont forget accounts
+    public static void printReceptionistCredentials() {
+        String query = """
+            SELECT 'patient' AS role, email, password FROM patient
+            UNION ALL
+            SELECT 'receptionist' AS role, email, password FROM receptionist
+            UNION ALL
+            SELECT 'doctor' AS role, email, password FROM doctor;
+            """;
+
+        try (Connection conn = connection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+
+            boolean hasRows = false;
+            while (rs.next()) {
+                hasRows = true;
+                String email = rs.getString("email");
+                String password = rs.getString("password");
+                System.out.println("Email: " + email + " | Password: " + password);
+            }
+            if (!hasRows) {
+                System.out.println("add stuff.");
+            }
+        } catch (SQLException e) {
+            System.err.println("error dude: " + e.getMessage());
+        }
     }
 
 }

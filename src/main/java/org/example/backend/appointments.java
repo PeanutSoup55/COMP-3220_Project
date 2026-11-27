@@ -7,6 +7,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 public class appointments {
 
@@ -73,7 +74,7 @@ public class appointments {
                     rows.add(new String[]{
                             rs.getString("id"),
                             rs.getString("date"),
-                            rs.getString("name"),
+                            rs.getString("doctor_name"),
                             rs.getString("field"),
                             rs.getString("location")
                     });
@@ -81,6 +82,35 @@ public class appointments {
             }
         }catch (SQLException e){
             System.err.println("like really suck at this: " + e.getMessage());
+        }
+        return rows;
+    }
+
+    public static List<String[]> forDoctor(int doctorId) {
+        List<String[]> rows = new ArrayList<>();
+        String sql = "SELECT a.date, p.name AS patient_name, p.phone, p.email, p.illness, p.symptoms "
+                + "FROM appointment a JOIN patient p ON p.id = a.p_id "
+                + "WHERE a.d_id = ? ORDER BY a.date";
+
+        try (Connection con = tables.connection();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+
+            stmt.setInt(1, doctorId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    rows.add(new String[]{
+                            rs.getString("date"),
+                            rs.getString("patient_name"),
+                            rs.getString("phone"),
+                            rs.getString("email"),
+                            rs.getString("illness"),
+                            Objects.toString(rs.getString("symptoms"), "")   // only nullable column
+                    });
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("forDoctor failed: " + e.getMessage());
         }
         return rows;
     }

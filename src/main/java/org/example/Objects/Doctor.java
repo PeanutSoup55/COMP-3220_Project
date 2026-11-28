@@ -1,5 +1,8 @@
 package org.example.Objects;
 
+import java.time.LocalDateTime;
+import java.util.*;
+
 public class Doctor extends User{
     private int docID;
     private String field;
@@ -12,27 +15,35 @@ public class Doctor extends User{
         this.docID = docID;
     }
 
-    public int getDocID() {
-        return docID;
+    public List<Patient> getTreatedPatients(List<Appointment> allAppointments, LocalDateTime now) {
+        Map<Integer, Patient> seen = new LinkedHashMap<>();
+        allAppointments.stream()
+                .filter(a -> a.getDoctor().getDocID() == docID)
+                .filter(a -> a.getDate().isBefore(now))
+                .filter(a -> a.getStatus() == AppointmentStatus.SCHEDULED || a.getStatus() == AppointmentStatus.LATE)
+                .sorted(Comparator.comparing(Appointment::getDate).reversed())
+                .forEach(a -> seen.putIfAbsent(a.getPatient().getPatientID(), a.getPatient()));
+        return new ArrayList<>(seen.values());
     }
 
-    public void setDocID(int docID) {
-        this.docID = docID;
+    public List<Appointment> getUpcomingAppointments(List<Appointment> allAppointments, LocalDateTime now) {
+        return allAppointments.stream()
+                .filter(a -> a.getDoctor().getDocID() == docID)
+                .filter(a -> a.getStatus() == AppointmentStatus.SCHEDULED)
+                .filter(a -> a.getDate().isAfter(now))
+                .sorted(Comparator.comparing(Appointment::getDate))
+                .toList();
+    }
+
+    public int getDocID() {
+        return docID;
     }
 
     public String getField() {
         return field;
     }
 
-    public void setField(String field) {
-        this.field = field;
-    }
-
     public int getEmrgphone() {
         return emrgphone;
-    }
-
-    public void setEmrgphone(int emrgphone) {
-        this.emrgphone = emrgphone;
     }
 }

@@ -11,7 +11,7 @@ public class profile {
     public static String[] get(int patientId) {
         String sql = "SELECT name, phone, illness, symptoms FROM patient WHERE id = ?";
 
-        try (Connection con = tables.connection();
+        try (Connection con = DatabaseStore.connection();
              PreparedStatement stmt = con.prepareStatement(sql)) {
 
             stmt.setInt(1, patientId);
@@ -38,7 +38,7 @@ public class profile {
         }
         String sql = "UPDATE patient SET name = ?, phone = ?, illness = ?, symptoms = ? WHERE id = ?";
 
-        try (Connection con = tables.connection();
+        try (Connection con = DatabaseStore.connection();
              PreparedStatement stmt = con.prepareStatement(sql)) {
 
             stmt.setString(1, name.trim());

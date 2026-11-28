@@ -2,7 +2,7 @@ package org.example.backend;
 
 import java.sql.*;
 
-public class tables {
+public class DatabaseStore {
 
     //db url, kinda important
     public static final String url = "jdbc:sqlite:./identifier.sqlite";
@@ -16,6 +16,60 @@ public class tables {
         }
         return connection;
     }
+
+    private static final String TABLE_PATIENT = "CREATE TABLE IF NOT EXISTS patient ("
+            + " id INTEGER PRIMARY KEY,"
+            + " name TEXT NOT NULL,"
+            + " illness TEXT NOT NULL,"
+            + " symptoms TEXT,"
+            + " email TEXT UNIQUE NOT NULL,"
+            + " password TEXT NOT NULL,"
+            + " phone INT NOT NULL)";
+
+    private static final String TABLE_RECEPTIONIST = "CREATE TABLE IF NOT EXISTS receptionist ("
+            + " id INTEGER PRIMARY KEY,"
+            + " name TEXT NOT NULL,"
+            + " email TEXT UNIQUE NOT NULL,"
+            + " password TEXT NOT NULL,"
+            + " phone INT NOT NULL)";
+
+    private static final String TABLE_DOCTOR = "CREATE TABLE IF NOT EXISTS doctor ("
+            + " id INTEGER PRIMARY KEY,"
+            + " name TEXT NOT NULL,"
+            + " field TEXT NOT NULL,"
+            + " email TEXT UNIQUE NOT NULL,"
+            + " password TEXT NOT NULL,"
+            + " phone INT NOT NULL,"
+            + " emrgphone INT NOT NULL)";
+
+    private static final String TABLE_APPOINTMENT = "CREATE TABLE IF NOT EXISTS appointment ("
+            + " id INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + " p_id INTEGER NOT NULL,"
+            + " d_id INTEGER NOT NULL,"
+            + " date TEXT NOT NULL,"
+            + " location TEXT NOT NULL,"
+            + " status TEXT NOT NULL DEFAULT 'SCHEDULED',"
+            + " reminder_call INTEGER NOT NULL DEFAULT 0,"
+            + " FOREIGN KEY (p_id) REFERENCES patient(id),"
+            + " FOREIGN KEY (d_id) REFERENCES doctor(id))";
+
+    private static final String TABLE_AVAILABILITY = "CREATE TABLE IF NOT EXISTS availability ("
+            + " id INTEGER PRIMARY KEY AUTOINCREMENT,"
+            + " d_id INTEGER NOT NULL,"
+            + " slot TEXT NOT NULL,"
+            + " UNIQUE (d_id, slot),"
+            + " FOREIGN KEY (d_id) REFERENCES doctor(id))";
+
+    private static final String INDEX_ONE_LIVE_BOOKING =
+            "CREATE UNIQUE INDEX IF NOT EXISTS ux_live_doctor_slot ON appointment (d_id, date) "
+                    + "WHERE status IN ('SCHEDULED', 'LATE')";
+
+    private static final String SQL_NEXT_OPEN_SLOT =
+            "SELECT slot FROM availability WHERE d_id = ? AND slot > ? "
+                    + "AND NOT EXISTS (SELECT 1 FROM appointment a WHERE a.d_id = availability.d_id "
+                    + "AND a.date = availability.slot AND a.status IN ('SCHEDULED', 'LATE')) "
+                    + "ORDER BY slot LIMIT 1";
+
     public static void createTables(){
 
         String patient = "CREATE TABLE IF NOT EXISTS patient (" +

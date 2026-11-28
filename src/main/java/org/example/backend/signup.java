@@ -2,7 +2,6 @@ package org.example.backend;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class signup {
@@ -36,7 +35,7 @@ public class signup {
             return "invalid email";
         }
 
-        try (Connection con = tables.connection();
+        try (Connection con = DatabaseStore.connection();
              PreparedStatement stmt = con.prepareStatement(sql)) {
             stmt.setString(1, name.trim());
             stmt.setString(2, email);

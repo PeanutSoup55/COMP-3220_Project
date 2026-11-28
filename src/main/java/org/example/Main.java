@@ -4,7 +4,7 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.example.UI.LoginPage;
-import org.example.backend.tables;
+import org.example.backend.DatabaseStore;
 
 public class Main extends Application {
 
@@ -15,7 +15,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        tables.createTables();
+        DatabaseStore.createTables();
         LoginPage root = new LoginPage(primaryStage);
         Scene scene = new Scene(root, 900, 500);
 

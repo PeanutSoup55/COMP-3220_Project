@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -22,7 +21,7 @@ public class appointments {
                 + "WHERE EXISTS (SELECT 1 FROM availability WHERE d_id = ? AND slot = ?) "
                 + "AND NOT EXISTS (SELECT 1 FROM appointment WHERE d_id = ? AND date = ?)";
 
-        try(Connection connection = tables.connection(); PreparedStatement stmt = connection.prepareStatement(sql)){
+        try(Connection connection = DatabaseStore.connection(); PreparedStatement stmt = connection.prepareStatement(sql)){
             stmt.setInt(1, pid);
             stmt.setInt(2, did);
             stmt.setString(3, slot);
@@ -40,7 +39,7 @@ public class appointments {
     public static boolean cancelOwn(int aid, int pid){
         String sql = "DELETE FROM appointment WHERE id = ? AND p_id = ? AND date > ?";
 
-        try (Connection con = tables.connection(); PreparedStatement stmt = con.prepareStatement(sql)){
+        try (Connection con = DatabaseStore.connection(); PreparedStatement stmt = con.prepareStatement(sql)){
             stmt.setInt(1, aid);
             stmt.setInt(2, pid);
             stmt.setString(3, now());
@@ -53,7 +52,7 @@ public class appointments {
 
     public static boolean cancelAny(int aid){
         String sql = "DELETE FROM appointment WHERE id = ?";
-        try (Connection con = tables.connection(); PreparedStatement stmt = con.prepareStatement(sql)){
+        try (Connection con = DatabaseStore.connection(); PreparedStatement stmt = con.prepareStatement(sql)){
             stmt.setInt(1, aid);
             return stmt.executeUpdate() == 1;
         }catch (SQLException e){
@@ -67,7 +66,7 @@ public class appointments {
         String sql = "SELECT a.id, a.date, d.name AS doctor_name, d.field, a.location "
                 + "FROM appointment a JOIN doctor d ON d.id = a.d_id "
                 + "WHERE a.p_id = ? ORDER BY a.date";
-        try(Connection con = tables.connection(); PreparedStatement stmt = con.prepareStatement(sql)){
+        try(Connection con = DatabaseStore.connection(); PreparedStatement stmt = con.prepareStatement(sql)){
             stmt.setInt(1, pid);
             try(ResultSet rs = stmt.executeQuery()){
                 while (rs.next()){
@@ -92,7 +91,7 @@ public class appointments {
                 + "FROM appointment a JOIN patient p ON p.id = a.p_id "
                 + "WHERE a.d_id = ? ORDER BY a.date";
 
-        try (Connection con = tables.connection();
+        try (Connection con = DatabaseStore.connection();
              PreparedStatement stmt = con.prepareStatement(sql)) {
 
             stmt.setInt(1, doctorId);
@@ -119,7 +118,7 @@ public class appointments {
         List<String[]> rows = new ArrayList<>();
         String sql = "SELECT DISTINCT field FROM doctor ORDER BY field";
 
-        try (Connection con = tables.connection();
+        try (Connection con = DatabaseStore.connection();
              PreparedStatement stmt = con.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
 
@@ -139,7 +138,7 @@ public class appointments {
                 ? "SELECT id, name, field FROM doctor WHERE field = ? ORDER BY name"
                 : "SELECT id, name, field FROM doctor ORDER BY name";
 
-        try (Connection con = tables.connection();
+        try (Connection con = DatabaseStore.connection();
              PreparedStatement stmt = con.prepareStatement(sql)) {
 
             if (filtered) {
@@ -167,7 +166,7 @@ public class appointments {
                 + "AND slot NOT IN (SELECT date FROM appointment WHERE d_id = ?) "
                 + "ORDER BY slot";
 
-        try (Connection con = tables.connection();
+        try (Connection con = DatabaseStore.connection();
              PreparedStatement stmt = con.prepareStatement(sql)) {
 
             stmt.setInt(1, doctorId);
@@ -191,7 +190,7 @@ public class appointments {
                 + "EXISTS(SELECT 1 FROM appointment a WHERE a.d_id = availability.d_id AND a.date = availability.slot) AS booked "
                 + "FROM availability WHERE d_id = ? ORDER BY slot";
 
-        try (Connection con = tables.connection();
+        try (Connection con = DatabaseStore.connection();
              PreparedStatement stmt = con.prepareStatement(sql)) {
 
             stmt.setInt(1, doctorId);
@@ -218,7 +217,7 @@ public class appointments {
                 + "JOIN doctor d ON d.id = a.d_id "
                 + "ORDER BY a.date";
 
-        try (Connection con = tables.connection();
+        try (Connection con = DatabaseStore.connection();
              PreparedStatement stmt = con.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
 
@@ -240,7 +239,7 @@ public class appointments {
     public static void addSlot(int doctorId, LocalDate date, String time) {
         String sql = "INSERT OR IGNORE INTO availability (d_id, slot) VALUES (?, ?)";
 
-        try (Connection con = tables.connection();
+        try (Connection con = DatabaseStore.connection();
              PreparedStatement stmt = con.prepareStatement(sql)) {
 
             stmt.setInt(1, doctorId);
@@ -254,7 +253,7 @@ public class appointments {
     public static void removeSlot(int doctorId, String slot) {
         String sql = "DELETE FROM availability WHERE d_id = ? AND slot = ?";
 
-        try (Connection con = tables.connection();
+        try (Connection con = DatabaseStore.connection();
              PreparedStatement stmt = con.prepareStatement(sql)) {
 
             stmt.setInt(1, doctorId);

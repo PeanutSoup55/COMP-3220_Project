@@ -1,6 +1,5 @@
 package org.example.backend;
 
-import org.example.Objects.Appointment;
 import org.example.Objects.Patient;
 
 import java.sql.*;
@@ -20,7 +19,7 @@ public class fetchData {
         String sql = "SELECT id, illness, symptoms, name, email, password, phone FROM patient";
 
         //statement is for query delivery and resultset is the object taht holds the data from the query before sendoff
-        try(Connection con = tables.connection(); Statement stmt = con.createStatement(); ResultSet rst = stmt.executeQuery(sql)){
+        try(Connection con = DatabaseStore.connection(); Statement stmt = con.createStatement(); ResultSet rst = stmt.executeQuery(sql)){
 
             //while theres a next patient run
             while (rst.next()){

@@ -27,7 +27,7 @@ public class login {
         String sql = "SELECT id FROM " + table + " WHERE email = ? AND password = ?";
 
         //login validation, if user exists return table associated with email
-        try(Connection con = tables.connection(); PreparedStatement stmt = con.prepareStatement(sql)){
+        try(Connection con = DatabaseStore.connection(); PreparedStatement stmt = con.prepareStatement(sql)){
             stmt.setString(1, trimmed);
             stmt.setString(2, password);
             ResultSet rst = stmt.executeQuery();
